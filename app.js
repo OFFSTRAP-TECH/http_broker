@@ -6,18 +6,19 @@ const app = express();
 const port = 8000;
 
 const uri = "mongodb+srv://offstrap_admin:offstrap_admin@offstrapprototype.sdgbo.mongodb.net/?retryWrites=true&w=majority&appName=offstrapPrototype";
-const client = new MongoClient(uri);
 
+let client;
+let db;
+
+// **Persistent MongoDB Connection**
 async function connectDB() {
-    try {
+    if (!client) {
+        client = new MongoClient(uri);
         await client.connect();
+        db = client.db("testDB");
         console.log("✅ Connected to MongoDB");
-    } catch (error) {
-        console.error("❌ Connection error:", error);
     }
 }
-
-connectDB();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,7 +29,7 @@ app.get("/", (req, res) => {
 
 app.post("/prototype/1", async (req, res) => {
     try {
-        const db = client.db("testDB");
+        await connectDB();  // Ensure DB is connected before handling the request
         const collection = db.collection("users");
         const jsonData = req.body;
 
@@ -49,5 +50,5 @@ app.post("/prototype/1", async (req, res) => {
     }
 });
 
-// Don't start `app.listen(port)`, Vercel handles that
-export default app;  // ✅ Required for Vercel
+// No `app.listen()` needed, Vercel handles it
+export default app;
