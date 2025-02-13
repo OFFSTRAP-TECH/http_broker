@@ -37,7 +37,7 @@ app.post("/prototype/1",async (req,res,next)=>{
         const result = await collection.insertOne(jsonData);
         console.log("Inserted");
         console.log(result);
-        res.send(200);
+        res.status(200);
 })
 app.listen(port,()=>{
     console.log(`server live at ${port}`)
