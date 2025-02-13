@@ -25,7 +25,7 @@ try {
 app.get("/",(req,res)=>{
 
     
-    res.send("Hello");
+    res.send("<h2>OFFSTRAP.com</h2>");
 })
 
 app.post("/prototype/1",async (req,res,next)=>{
