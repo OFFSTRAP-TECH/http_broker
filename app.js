@@ -3,16 +3,13 @@ import bodyParser from "body-parser";
 import { MongoClient } from "mongodb";
 
 const app = express();
-const port = 8000;
-
 const uri = "mongodb+srv://offstrap_admin:offstrap_admin@offstrapprototype.sdgbo.mongodb.net/?retryWrites=true&w=majority&appName=offstrapPrototype";
 
 let client;
 let db;
 
-// **Persistent MongoDB Connection**
 async function connectDB() {
-    if (!client) {
+    if (!client || !client.topology || !client.topology.isConnected()) {
         client = new MongoClient(uri);
         await client.connect();
         db = client.db("testDB");
@@ -21,7 +18,6 @@ async function connectDB() {
 }
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
     res.send("<h2>OFFSTRAP.com</h2>");
@@ -29,7 +25,7 @@ app.get("/", (req, res) => {
 
 app.post("/prototype/1", async (req, res) => {
     try {
-        await connectDB();  // Ensure DB is connected before handling the request
+        await connectDB();  // Ensure connection is established
         const collection = db.collection("users");
         const jsonData = req.body;
 
@@ -50,5 +46,4 @@ app.post("/prototype/1", async (req, res) => {
     }
 });
 
-// No `app.listen()` needed, Vercel handles it
-export default app;
+export default app;  // No app.listen() needed for Vercel
