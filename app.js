@@ -67,10 +67,10 @@ app.post("/prototype/1", async (req, res) => {
     }
 });
 
-export default app;  // No app.listen() needed for Vercel
+//export default app;  // No app.listen() needed for Vercel
 
-/*
+
 app.listen(9000,()=>{
     console.log("server live at 9000");
 })
-*/
+
