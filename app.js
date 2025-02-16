@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { MongoClient } from "mongodb";
-
+import cors from "cors";
 const app = express();
 const uri = "mongodb+srv://offstrap_admin:offstrap_admin@offstrapprototype.sdgbo.mongodb.net/?retryWrites=true&w=majority&appName=offstrapPrototype";
 
@@ -26,6 +26,9 @@ app.get("/prototype/1", async (req, res) => {
 
         const data= await collection.findOne({});
         console.log(data);
+        res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
         res.status(201).json(data);
         client.close();
     }
