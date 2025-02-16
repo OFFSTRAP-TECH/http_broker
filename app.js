@@ -27,6 +27,7 @@ app.get("/prototype/1", async (req, res) => {
         const data= await collection.findOne({});
         console.log(data);
         res.status(201).json(data);
+        client.close();
     }
     catch(err){
         console.log(err);
@@ -43,17 +44,18 @@ app.post("/prototype/1", async (req, res) => {
         console.log("✅ Connected to MongoDB");
         const collection = db.collection("users");
         const jsonData = req.body;
-
+        
         if (!jsonData || Object.keys(jsonData).length === 0) {
             return res.status(400).json({ error: "Invalid JSON data" });
         }
 
         const result = await collection.insertOne(jsonData);
         console.log("✅ Inserted:", result.insertedId);
-        collection.close();
+        client.close();
         res.status(201).json({
             message: "Data stored successfully",
             id: result.insertedId
+            
         });
         
     } catch (error) {
@@ -68,5 +70,4 @@ export default app;  // No app.listen() needed for Vercel
 app.listen(9000,()=>{
     console.log("server live at 9000");
 })
-
 */
