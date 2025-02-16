@@ -8,14 +8,7 @@ const uri = "mongodb+srv://offstrap_admin:offstrap_admin@offstrapprototype.sdgbo
 let client;
 let db;
 
-async function connectDB() {
-    if (!client || !client.topology || !client.topology.isConnected()) {
-        client = new MongoClient(uri);
-        await client.connect();
-        db = client.db("testDB");
-        console.log("✅ Connected to MongoDB");
-    }
-}
+
 
 app.use(bodyParser.json());
 
@@ -23,9 +16,31 @@ app.get("/", (req, res) => {
     res.send("<h2>OFFSTRAP.com</h2>");
 });
 
+app.get("/prototype/1", async (req, res) => {
+    try{
+        client = new MongoClient(uri);
+        await client.connect();
+        db = client.db("testDB");
+        console.log("✅ Connected to MongoDB");
+        const collection = db.collection("users");
+
+        const data= await collection.findOne({});
+        console.log(data);
+        res.status(201).json(data);
+    }
+    catch(err){
+        console.log(err);
+
+    }
+    
+});
+
 app.post("/prototype/1", async (req, res) => {
     try {
-        await connectDB();  // Ensure connection is established
+        client = new MongoClient(uri);
+        await client.connect();
+        db = client.db("testDB");
+        console.log("✅ Connected to MongoDB");
         const collection = db.collection("users");
         const jsonData = req.body;
 
@@ -35,15 +50,23 @@ app.post("/prototype/1", async (req, res) => {
 
         const result = await collection.insertOne(jsonData);
         console.log("✅ Inserted:", result.insertedId);
-
+        collection.close();
         res.status(201).json({
             message: "Data stored successfully",
             id: result.insertedId
         });
+        
     } catch (error) {
         console.error("❌ Insert Error:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-export default app;  // No app.listen() needed for Vercel
+//export default app;  // No app.listen() needed for Vercel
+
+/*
+app.listen(9000,()=>{
+    console.log("server live at 9000");
+})
+
+*/
